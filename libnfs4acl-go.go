@@ -6,8 +6,11 @@ package nfs4acl
 
 import (
 	"fmt"
+	"golang.org/x/sys/unix"
 	//"unsafe"
 )
+
+const NFS4_ACL_XATTR string = "system.nfs4_acl"
 
 //type NFS4_ACL struct {
 //	a C.nfs4_acl
@@ -23,11 +26,18 @@ func nfs4_getacl_for_path(path string) (string, error) {
 	fmt.Println("Called getacl_for_path\n")
 	//Validate the Path and detect directory
 	// Fetch extended attributes for path
-	//var xattr []byte
-	//result := nfs4_getxattr(path, nil, nil)
+	//result := nfs4_getxattr(path, NFS4_ACL_XATTR, nil)
+	result, error := unix.Getxattr(path, NFS4_ACL_XATTR, nil)
+	fmt.Printf("xattr will be %d bits\n", result)
 
-	//return acls, nil
-	return "yay", nil
+	xattr := make([]byte, result)
+	result, error = unix.Getxattr(path, NFS4_ACL_XATTR, xattr)
+	
+	fmt.Printf("got back %d bits\n", result)
+	fmt.Printf("xattr is %+v\n", xattr)
+
+	//return acls, error
+	return "yay", error
 }
 
 /*
