@@ -5,55 +5,66 @@
 package nfs4acl
 
 import (
-	"fmt"
+	//"fmt"
 	"golang.org/x/sys/unix"
+	"os"
 	//"unsafe"
 )
 
-const NFS4_ACL_XATTR string = "system.nfs4_acl"
+const NFS4_ACL_XATTR = "system.nfs4_acl"
+const XATTR_REPLACE_FLAG = 0x2
 
-//type NFS4_ACL struct {
-//	a C.nfs4_acl
-//}
-
-func GetFACL(path string, recursive, header bool) (string, error) {
-	acls, error := nfs4_getacl_for_path(path)
-
-	return acls, error
-}
-
-func nfs4_getacl_for_path(path string) (string, error) {
-	fmt.Println("Called getacl_for_path\n")
+func Nfs4_getacl_for_path(path string) (acl *Nfs4_acl, err error) {
 	//Validate the Path and detect directory
-	// Fetch extended attributes for path
-	//result := nfs4_getxattr(path, NFS4_ACL_XATTR, nil)
-	result, error := unix.Getxattr(path, NFS4_ACL_XATTR, nil)
-	fmt.Printf("xattr will be %d bits\n", result)
+	fi, err := os.Stat(path)
+	if err != nil {
+		//File Not Exists and other errors
+		return
+	} //implicit else
+	isDir := fi.IsDir() //detect if the path is a directory
 
-	xattr := make([]byte, result)
-	result, error = unix.Getxattr(path, NFS4_ACL_XATTR, xattr)
-	
-	fmt.Printf("got back %d bits\n", result)
-	fmt.Printf("xattr is %+v\n", xattr)
-
-	//return acls, error
-	return "yay", error
-}
-
-/*
-func nfs4_getxattr() () {
-
-}
-
-func PrintACL(acl *C.struct_nfs4_acl) (string, error) {
-	
-
-}
-
-func PrintACE(ace *C.struct_nfs4_ace, isdir uint32) {
+	//get the size of our value buffer
 	var result int
-	var who *char
-	var buf char[16]
+	result, err = nfs4_getxattr(path, nil)
+	if err != nil {
+		return
+	}
 
+	xattr := make([]byte, result, result)
+	result, err = nfs4_getxattr(path, xattr)
+	if err != nil {
+		return
+	}
+
+	acl, err = nfs4_xattr_load(xattr[:result], isDir)
+
+	//return acl, err
+	return
 }
-*/
+
+func Nfs4_setacl_for_path(path string, acl *Nfs4_acl) (err error) {
+	//Validate the Path and detect directory
+	_, err = os.Stat(path)
+	if err != nil {
+		//File Not Exists and other errors
+		return
+	} //implicit else
+
+	err = nfs4_setxattr(path, acl)
+
+	return
+}
+
+func nfs4_getxattr(path string, value []byte) (int, error) {
+	result, err := unix.Getxattr(path, NFS4_ACL_XATTR, value)
+	//check result and err for know problems
+
+	return result, err
+}
+
+func nfs4_setxattr(path string, acl *Nfs4_acl) error {
+	xattr, err := acl.PackXAttr()
+	err = unix.Setxattr(path, NFS4_ACL_XATTR, xattr, XATTR_REPLACE_FLAG)
+
+	return err
+}

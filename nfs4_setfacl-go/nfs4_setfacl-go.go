@@ -14,7 +14,7 @@ import (
 func main() {
 	//recursive := flag.Bool("recursive", false, "recurse into directories")
 	//omitheader := flag.Bool("omit-header", false, "omit header for each path")
-	verbose := flag.Bool("verbose", false, "verbosity of output")
+	//verbose := flag.Bool("verbose", false, "verbosity of output")
 
 	flag.Parse()
 	if flag.NArg() < 1 {
@@ -23,11 +23,11 @@ func main() {
 
 	for i := 0; i < flag.NArg(); i++ {
 		filePath := flag.Arg(i)
-		acls, err := nfs4acl.Nfs4_getacl_for_path(filePath)
+		acl, err := nfs4acl.Nfs4_getacl_for_path(filePath)
+		acl.RemoveWrite()
+		err = nfs4acl.Nfs4_setacl_for_path(filePath, acl)
 		if err != nil {
 			log.Fatal(err)
-		} else {
-			acls.Nfs4_print_acl(*verbose)
 		}
 	}
 }
