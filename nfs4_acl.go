@@ -444,7 +444,13 @@ func Nfs4ACEWhoStringAtomLength(whoLength int) int {
 	return whoIncrement
 }
 
-func (acl *Nfs4_acl) RemoveWrite() () {
+func (acl *Nfs4_acl) SetWrite() () {
+	for _, ace := range acl.ace_list {
+		ace.access_mask = ace.access_mask | NFS4_ACE_WRITE_DATA
+	}
+}
+
+func (acl *Nfs4_acl) ClearWrite() () {
 	for _, ace := range acl.ace_list {
 		ace.access_mask = ace.access_mask &^ NFS4_ACE_WRITE_DATA
 	}
