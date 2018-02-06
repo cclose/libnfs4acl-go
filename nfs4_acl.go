@@ -272,8 +272,7 @@ func (acl *NFS4ACL) ApplyAccessMask(accessMask uint32) {
 
 // Similar to applyAccessMaskByWho, but the whoType matching is faster if usable
 func (acl *NFS4ACL) ApplyAccessMaskByWhoType(accessMask uint32, whoType uint) error {
-	if whoType == NFS4_ACL_WHO_NAMED {
-		return errors.New("named who not allowed")
+	if whoType == NFS4_ACL_WHO_NAMED { return errors.New("named who not allowed")
 	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
 		return errors.New("unsupported who type")
 	}
@@ -369,6 +368,117 @@ func (acl *NFS4ACL) SetAccessMaskByWho(accessMask uint32, who string) error {
 		//and only set if the who matches
 		if ace.Who == who {
 			ace.setAccessMask(accessMask)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) ApplyFlags(flags uint32) {
+	for _, ace := range acl.aceList {
+		ace.applyFlags(flags)
+	}
+}
+
+// Similar to applyFlagsByWho, but the whoType matching is faster if usable
+func (acl *NFS4ACL) ApplyFlagsByWhoType(flags uint32, whoType uint) error {
+	if whoType == NFS4_ACL_WHO_NAMED {
+		return errors.New("named who not allowed")
+	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
+		return errors.New("unsupported who type")
+	}
+
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only apply if the whotype matches
+		if ace.WhoType == whoType {
+			ace.applyFlags(flags)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) ApplyFlagsByWho(flags uint32, who string) error {
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only apply if the who matches
+		if ace.Who == who {
+			ace.applyFlags(flags)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) RemoveFlags(flags uint32) {
+	for _, ace := range acl.aceList {
+		ace.removeFlags(flags)
+	}
+}
+
+// Similar to removeFlagsByWho, but the whoType matching is faster if usable
+func (acl *NFS4ACL) RemoveFlagsByWhoType(flags uint32, whoType uint) error {
+	if whoType == NFS4_ACL_WHO_NAMED {
+		return errors.New("named who not allowed")
+	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
+		return errors.New("unsupported who type")
+	}
+
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only remove if the whotype matches
+		if ace.WhoType == whoType {
+			ace.removeFlags(flags)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) RemoveFlagsByWho(flags uint32, who string) error {
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only remove if the who matches
+		if ace.Who == who {
+			ace.removeFlags(flags)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) SetFlags(flags uint32) {
+	for _, ace := range acl.aceList {
+		ace.setFlags(flags)
+	}
+}
+
+// Similar to setFlagsByWho, but the whoType matching is faster if usable
+func (acl *NFS4ACL) SetFlagsByWhoType(flags uint32, whoType uint) error {
+	if whoType == NFS4_ACL_WHO_NAMED {
+		return errors.New("named who not allowed")
+	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
+		return errors.New("unsupported who type")
+	}
+
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only set if the whotype matches
+		if ace.WhoType == whoType {
+			ace.setFlags(flags)
+		}
+	}
+
+	return nil
+}
+
+func (acl *NFS4ACL) SetFlagsByWho(flags uint32, who string) error {
+	//iterate our ace's
+	for _, ace := range acl.aceList {
+		//and only set if the who matches
+		if ace.Who == who {
+			ace.setFlags(flags)
 		}
 	}
 

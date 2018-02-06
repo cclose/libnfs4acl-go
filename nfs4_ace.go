@@ -155,8 +155,6 @@ func (ace *NFS4ACE) PrintACE(verbose, isDir bool) error {
 	}
 	if ace.AccessMask&NFS4_ACE_EXECUTE != 0 {
 		buffer.WriteRune(PERM_EXECUTE)
-	} else {
-		fmt.Println("no execute perms!")
 	}
 	if ace.AccessMask&NFS4_ACE_READ_ATTRIBUTES != 0 {
 		buffer.WriteRune(PERM_READ_ATTR)
@@ -208,4 +206,22 @@ func (ace *NFS4ACE) removeAccessMask(accessMask uint32) {
 //Sets the accessmask to the specified mask. Total overwrite
 func (ace *NFS4ACE) setAccessMask(accessMask uint32) {
 	ace.AccessMask = accessMask
+}
+
+
+//Bitwise ORs the flags. This will set any bits in the specified flags
+//but will not modify any existing set bits
+func (ace *NFS4ACE) applyFlags(flags uint32) {
+	ace.Flags = ace.Flags | flags
+}
+
+//Bitwise AND NOT the flags (bit clear). This will unset any bits in the specified flags
+//but will not modify any others
+func (ace *NFS4ACE) removeFlags(flags uint32) {
+	ace.Flags = ace.Flags &^ flags
+}
+
+//Sets the flags to the specified mask. Total overwrite
+func (ace *NFS4ACE) setFlags(flags uint32) {
+	ace.Flags = flags
 }
