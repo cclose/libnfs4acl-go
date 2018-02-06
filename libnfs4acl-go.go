@@ -12,9 +12,10 @@ import (
 )
 
 const NFS4_ACL_XATTR = "system.nfs4_acl"
+const ERROR_NFS4_NOT_SUPPORTED = "operation not supported"
 const XATTR_REPLACE_FLAG = 0x2
 
-func Nfs4_getacl_for_path(path string) (acl *Nfs4_acl, err error) {
+func Nfs4_getacl_for_path(path string) (acl *NFS4ACL, err error) {
 	//Validate the Path and detect directory
 	fi, err := os.Stat(path)
 	if err != nil {
@@ -36,13 +37,13 @@ func Nfs4_getacl_for_path(path string) (acl *Nfs4_acl, err error) {
 		return
 	}
 
-	acl, err = nfs4_xattr_load(xattr[:result], isDir)
+	acl, err = XAttrLoad(xattr[:result], isDir)
 
 	//return acl, err
 	return
 }
 
-func Nfs4_setacl_for_path(path string, acl *Nfs4_acl) (err error) {
+func Nfs4_setacl_for_path(path string, acl *NFS4ACL) (err error) {
 	//Validate the Path and detect directory
 	_, err = os.Stat(path)
 	if err != nil {
@@ -62,7 +63,7 @@ func nfs4_getxattr(path string, value []byte) (int, error) {
 	return result, err
 }
 
-func nfs4_setxattr(path string, acl *Nfs4_acl) error {
+func nfs4_setxattr(path string, acl *NFS4ACL) error {
 	xattr, err := acl.PackXAttr()
 	err = unix.Setxattr(path, NFS4_ACL_XATTR, xattr, XATTR_REPLACE_FLAG)
 

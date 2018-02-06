@@ -24,7 +24,7 @@ func main() {
 	for i := 0; i < flag.NArg(); i++ {
 		filePath := flag.Arg(i)
 		acl, err := nfs4acl.Nfs4_getacl_for_path(filePath)
-		acl.RemoveWrite()
+		acl.RemoveMask(NFS4_ACE_WRITE_DATA)
 		err = nfs4acl.Nfs4_setacl_for_path(filePath, acl)
 		if err != nil {
 			log.Fatal(err)

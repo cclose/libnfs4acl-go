@@ -27,7 +27,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		} else {
-			acls.Nfs4_print_acl(*verbose)
+			acls.PrintACL(*verbose)
 		}
 	}
 }
