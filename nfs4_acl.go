@@ -264,14 +264,14 @@ func (acl *NFS4ACL) PackXAttr() (xattr []byte, err error) {
 	return
 }
 
-func (acl *NFS4ACL) applyAccessMask(accessMask uint32) {
+func (acl *NFS4ACL) ApplyAccessMask(accessMask uint32) {
 	for _, ace := range acl.aceList {
 		ace.applyAccessMask(accessMask)
 	}
 }
 
 // Similar to applyAccessMaskByWho, but the whoType matching is faster if usable
-func (acl *NFS4ACL) applyAccessMaskByWhoType(accessMask uint32, whoType uint) error {
+func (acl *NFS4ACL) ApplyAccessMaskByWhoType(accessMask uint32, whoType uint) error {
 	if whoType == NFS4_ACL_WHO_NAMED {
 		return errors.New("named who not allowed")
 	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
@@ -289,7 +289,7 @@ func (acl *NFS4ACL) applyAccessMaskByWhoType(accessMask uint32, whoType uint) er
 	return nil
 }
 
-func (acl *NFS4ACL) applyAccessMaskByWho(accessMask uint32, who string) error {
+func (acl *NFS4ACL) ApplyAccessMaskByWho(accessMask uint32, who string) error {
 	//iterate our ace's
 	for _, ace := range acl.aceList {
 		//and only apply if the who matches
@@ -301,14 +301,14 @@ func (acl *NFS4ACL) applyAccessMaskByWho(accessMask uint32, who string) error {
 	return nil
 }
 
-func (acl *NFS4ACL) removeAccessMask(accessMask uint32) {
+func (acl *NFS4ACL) RemoveAccessMask(accessMask uint32) {
 	for _, ace := range acl.aceList {
 		ace.removeAccessMask(accessMask)
 	}
 }
 
 // Similar to removeAccessMaskByWho, but the whoType matching is faster if usable
-func (acl *NFS4ACL) removeAccessMaskByWhoType(accessMask uint32, whoType uint) error {
+func (acl *NFS4ACL) RemoveAccessMaskByWhoType(accessMask uint32, whoType uint) error {
 	if whoType == NFS4_ACL_WHO_NAMED {
 		return errors.New("named who not allowed")
 	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
@@ -326,7 +326,7 @@ func (acl *NFS4ACL) removeAccessMaskByWhoType(accessMask uint32, whoType uint) e
 	return nil
 }
 
-func (acl *NFS4ACL) removeAccessMaskByWho(accessMask uint32, who string) error {
+func (acl *NFS4ACL) RemoveAccessMaskByWho(accessMask uint32, who string) error {
 	//iterate our ace's
 	for _, ace := range acl.aceList {
 		//and only remove if the who matches
@@ -338,14 +338,14 @@ func (acl *NFS4ACL) removeAccessMaskByWho(accessMask uint32, who string) error {
 	return nil
 }
 
-func (acl *NFS4ACL) setAccessMask(accessMask uint32) {
+func (acl *NFS4ACL) SetAccessMask(accessMask uint32) {
 	for _, ace := range acl.aceList {
 		ace.setAccessMask(accessMask)
 	}
 }
 
 // Similar to setAccessMaskByWho, but the whoType matching is faster if usable
-func (acl *NFS4ACL) setAccessMaskByWhoType(accessMask uint32, whoType uint) error {
+func (acl *NFS4ACL) SetAccessMaskByWhoType(accessMask uint32, whoType uint) error {
 	if whoType == NFS4_ACL_WHO_NAMED {
 		return errors.New("named who not allowed")
 	} else if whoType < NFS4_ACL_WHO_NAMED || whoType > NFS4_ACL_WHO_EVERYONE {
@@ -363,7 +363,7 @@ func (acl *NFS4ACL) setAccessMaskByWhoType(accessMask uint32, whoType uint) erro
 	return nil
 }
 
-func (acl *NFS4ACL) setAccessMaskByWho(accessMask uint32, who string) error {
+func (acl *NFS4ACL) SetAccessMaskByWho(accessMask uint32, who string) error {
 	//iterate our ace's
 	for _, ace := range acl.aceList {
 		//and only set if the who matches
