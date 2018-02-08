@@ -24,12 +24,12 @@ func Nfs4_getacl_for_path(path string) (acl *NFS4ACL, err error) {
 	} //implicit else
 	isDir := fi.IsDir() //detect if the path is a directory
 
-	return Nfs4GetAcl(path, isDir)
+	return GetAcl(path, isDir)
 }
 
 //Proxy function that can be used when you already know your path exists and
 //if the path is a directory or not. this is helpful when using filepath walks
-func Nfs4GetAcl(path string, isDir bool) (acl *NFS4ACL, err error) {
+func GetAcl(path string, isDir bool) (acl *NFS4ACL, err error) {
 	//get the size of our value buffer
 	var result int
 	result, err = nfs4_getxattr(path, nil)
@@ -58,10 +58,10 @@ func Nfs4_setacl_for_path(path string, acl *NFS4ACL) (err error) {
 		return
 	} //implicit else
 
-	return Nfs4SetACL(path, acl)
+	return SetACL(path, acl)
 }
 
-func Nfs4SetACL(path string, acl *NFS4ACL) (err error) {
+func SetACL(path string, acl *NFS4ACL) (err error) {
 	err = nfs4_setxattr(path, acl)
 
 	return
