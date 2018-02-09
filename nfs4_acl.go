@@ -200,6 +200,16 @@ func XAttrLoad(value []byte, isDir bool) (newACL *NFS4ACL, err error) {
 
 	return //returns newACL, err
 }
+
+//We reset our slice... this won't garbage collect the old aces, but that's ok because the ACLs are short lived anyways
+func (acl *NFS4ACL) ClearACEs() error {
+	acl.aceList = acl.aceList[:0]
+}
+
+func (acl *NFS4ACL) AddACE(aceType, aceFlags, aceMask uint32, aceWho string) {
+	acl.aceList = append(acl.aceList, NewNFS4ACE(aceType, aceFlags, aceMask, aceWho))
+}
+
 func (acl *NFS4ACL) PrintACL(verbose bool) error {
 	for _, ace := range acl.aceList {
 		ace.PrintACE(verbose, acl.isDirectory)
